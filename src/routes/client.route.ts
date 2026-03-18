@@ -1,144 +1,81 @@
 import { Router } from "express";
-import { ClinetsController } from "../controllers";
-import { ClientService, JWTservice } from "../services";
-import { ClientRepository } from "../repositories";
-import { db } from "../db";
-import { AuthMiddleware } from "../middleware";
+import  ClientController  from "../modules/auth/client.controller";
+import  ClientService  from "../modules/auth/client.service";
+import  ClientRepository  from "../modules/auth/client.repository";
+import JWTservice from "../core/jwt.service";
+import { db } from "../config/database";
+import { AuthMiddleware } from "../modules/auth/auth.middleware";
 
 const router = Router();
 
 const clientRepository = new ClientRepository(db);
 const jwtService = new JWTservice();
 const clientService = new ClientService(clientRepository, jwtService);
-const clientController = new ClinetsController(clientService);
+const clientController = new ClientController(clientService);
 
-/**
- * @swagger
- * /api/clients:
- *   post:
- *     summary: Criar um novo cliente
- *     description: Cria um novo cliente no banco de dados
- *     tags:
- *       - Clients
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               phone:
- *                 type: string
- *     responses:
- *       201:
- *         description: Cliente criado com sucesso
- */
-router.post("/clients", clientController.createClient.bind(clientController));
-
-/**
- * @swagger
- * /api/clients/login:
- *   post:
- *     summary: Autenticar um cliente
- *     description: Autentica um cliente com email e senha
- *     tags:
- *       - Clients
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       200:
- *         description: Cliente autenticado com sucesso
- */
-router.post(
-  "/clients/login",
-  clientController.loginClient.bind(clientController),
-);
-
-/**
- * @ swagger
- * /api/clients/{email}:
- *   get:
- *     summary: Obter cliente por email
- *     description: Retorna os detalhes do cliente com base no email fornecido
- *     tags:
- *       - Clients
- *     parameters:
- *       - in: path
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *         description: Email do cliente
- *     responses:
- *       200:
- *         description: Detalhes do cliente retornados com sucesso
-
- * router.get(
-  "/clients/:email",
-  clientController.getclientByEmail.bind(clientController),
-);
-*/
-
-/**
- * @swagger
- * /api/clients/profile/{id}:
- *   get:
- *     summary: Obter perfil do cliente por ID
- *     description: Retorna os detalhes do perfil do cliente com base no ID fornecido
- *     tags:
- *       - Clients
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID do cliente
- *     responses:
- *       200:
- *         description: Detalhes do perfil do cliente retornados com sucesso
- */
-router.get(
-  "/clients/profile/:id",
-  AuthMiddleware,
-  clientController.getProfile.bind(clientController),
-);
+// ============================================
+// GET - Recuperar Dados
+// ============================================
 
 /**
  * @swagger
  * /api/clients:
  *   get:
- *     summary: Obter todos os clientes apenas para adms
- *     description: Retorna uma lista de todos os clientes
+ *     summary: Listar todos os clientes
+ *     description: Retorna uma lista de todos os clientes (apenas para administradores)
  *     tags:
  *       - Clients
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de clientes retornada com sucesso
+ *       401:
+ *         description: Não autorizado
  */
 router.get("/clients", clientController.getAllClients.bind(clientController));
 
 /**
  * @swagger
+ * /api/clients/profile/{id}:
+ *   get:
+ *     summary: Obter perfil do cliente
+ *     description: Retorna os detalhes do perfil do cliente autenticado
+ *     tags:
+ *       - Clients
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do cliente
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Perfil do cliente retornado com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       404:
+ *         description: Cliente não encontrado
+ */
+router.get(
+  "/clients/profile/:id",
+  AuthMiddleware,
+  clientController.getClientById.bind(clientController),
+);
+
+// ============================================
+// PUT - Atualizar Dados
+// ============================================
+
+/**
+ * @swagger
  * /api/clients/{id}:
  *   put:
- *     summary: Atualizar cliente
- *     description: Atualiza os detalhes do cliente com base no ID fornecido
+ *     summary: Atualizar dados do cliente
+ *     description: Atualiza as informações de um cliente específico
  *     tags:
  *       - Clients
  *     parameters:
@@ -161,11 +98,15 @@ router.get("/clients", clientController.getAllClients.bind(clientController));
  *                 type: string
  *               password:
  *                 type: string
- *               phone:
- *                 type: string
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Cliente atualizado com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       404:
+ *         description: Cliente não encontrado
  */
 router.put(
   "/clients/:id",
@@ -173,12 +114,16 @@ router.put(
   clientController.updateClient.bind(clientController),
 );
 
+// ============================================
+// DELETE - Remover Dados
+// ============================================
+
 /**
  * @swagger
  * /api/clients/{id}:
  *   delete:
  *     summary: Deletar cliente
- *     description: Deleta o cliente com base no ID fornecido
+ *     description: Remove um cliente específico do banco de dados
  *     tags:
  *       - Clients
  *     parameters:
@@ -188,9 +133,15 @@ router.put(
  *         schema:
  *           type: string
  *         description: ID do cliente
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Cliente deletado com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       404:
+ *         description: Cliente não encontrado
  */
 router.delete(
   "/clients/:id",

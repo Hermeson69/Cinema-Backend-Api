@@ -1,6 +1,8 @@
 import "dotenv/config";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
+import ClienteRoute from "./routes/client.route";
+import AuthRoute from "./routes/auth.route";
 import express from "express";
 
 const app = express();
@@ -38,6 +40,8 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api", ClienteRoute);
+app.use("/api", AuthRoute);
 
 
 app.listen(PORT, async () => {
