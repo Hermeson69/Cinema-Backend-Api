@@ -4,7 +4,7 @@ import { JWTEXPIRATION, JWTREFRESHSECRET, JWTSECRETKEY } from "../config/env";
  * Interface for validate a token per role and type of user
  */
 interface JWTPayload {
-  id: string;
+  id: number;
   email: string;
   role?: string;
 }

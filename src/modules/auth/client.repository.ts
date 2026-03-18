@@ -78,6 +78,29 @@ export default class ClientRepository {
     );
   }
 
+  async getByEmail(email: string): Promise<ClientModel | null> {
+    const [client] = await this.db
+      .select()
+      .from(Clients)
+      .where(eq(Clients.email, email))
+      .limit(1);
+
+    if (!client) {
+      return null;
+    }
+
+    return new ClientModel(
+      client.id,
+      client.publicId,
+      client.name,
+      client.email,
+      client.password,
+      client.createdAt,
+      client.updatedAt,
+      client.deletedAt,
+    );
+  }
+
   async update(client: ClientModel): Promise<ClientModel> {
     const clientData: typeof Clients.$inferInsert = {
       publicId: client.publicId,
