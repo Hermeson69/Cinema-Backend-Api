@@ -6,6 +6,7 @@ import {
   LoginData,
   SignupData,
   AuthResponse,
+  LoginSchema,
 } from "./client.schema";
 import { Request, Response } from "express";
 import { string } from "zod";
@@ -30,8 +31,9 @@ export default class ClientController {
 
   async login(req: Request, res: Response): Promise<void> {
     try {
-      const data: LoginData = req.body;
-      const authResponse: AuthResponse = await this.clientService.login(data);
+      const validatedData = LoginSchema.parse(req.body);
+      const authResponse: AuthResponse =
+        await this.clientService.login(validatedData);
       res.status(200).json(authResponse);
     } catch (error) {
       res.status(400).json({ error: (error as Error).message });

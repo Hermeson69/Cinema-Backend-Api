@@ -44,7 +44,7 @@ export default class ClientService {
   }
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const validateData = CreateClient.parse(data);
+    const validateData = LoginSchema.parse(data);
     const client = await this.clientRepository.getByEmail(validateData.email);
 
     if (!client) {
@@ -67,7 +67,7 @@ export default class ClientService {
 
     return AuthResponseSchema.parse({
       token,
-      client: { id: client.id, email: client.email },
+      client: ClentResponseSchema.parse(client),
     });
   }
 

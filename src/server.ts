@@ -4,6 +4,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 import ClienteRoute from "./routes/client.route";
 import AuthRoute from "./routes/auth.route";
 import express from "express";
+import { seed } from "./seed/seed";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,7 +30,7 @@ const swaggerOptions = {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
-          description: "Insira o token JWT obtido no login"
+          description: "Insira o token JWT obtido no login",
         },
       },
     },
@@ -43,12 +44,11 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", ClienteRoute);
 app.use("/api", AuthRoute);
 
-
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on PORT ${PORT}`);
   console.log(`📚 Docs available at http://localhost:${PORT}/docs`);
-  
-  // if (process.env.NODE_ENV !== "production") {
-  //   await seed();
-  // }
+
+  if (process.env.NODE_ENV !== "production") {
+    await seed();
+  }
 });
