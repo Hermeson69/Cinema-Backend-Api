@@ -9,7 +9,6 @@ import {
   LoginSchema,
 } from "./client.schema";
 import { Request, Response } from "express";
-import { string } from "zod";
 
 export default class ClientController {
   private clientService: ClientService;

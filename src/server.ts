@@ -3,6 +3,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import ClienteRoute from "./routes/client.route";
 import AuthRoute from "./routes/auth.route";
+import SeatRoute from "./routes/seat.route";
 import express from "express";
 import { seed } from "./seed/seed";
 
@@ -43,6 +44,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", ClienteRoute);
 app.use("/api", AuthRoute);
+app.use("/api", SeatRoute);
 
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on PORT ${PORT}`);

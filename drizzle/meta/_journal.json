@@ -8,6 +8,20 @@
       "when": 1773860947493,
       "tag": "0000_pink_odin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773955479903,
+      "tag": "0001_crazy_tinkerer",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773956885850,
+      "tag": "0002_overjoyed_venus",
+      "breakpoints": true
     }
   ]
 }

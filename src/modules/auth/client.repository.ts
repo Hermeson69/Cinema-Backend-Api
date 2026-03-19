@@ -18,7 +18,6 @@ export default class ClientRepository {
       password: client.password,
       createdAt: client.createdAt,
       updatedAt: client.updatedAt,
-      deletedAt: null,
     };
 
     const [inserted] = await this.db
@@ -34,7 +33,6 @@ export default class ClientRepository {
       inserted.password,
       inserted.createdAt,
       inserted.updatedAt,
-      inserted.deletedAt,
     );
   }
 
@@ -50,7 +48,6 @@ export default class ClientRepository {
           client.password,
           client.createdAt,
           client.updatedAt,
-          client.deletedAt,
         ),
     );
   }
@@ -74,7 +71,6 @@ export default class ClientRepository {
       client.password,
       client.createdAt,
       client.updatedAt,
-      client.deletedAt,
     );
   }
 
@@ -97,7 +93,6 @@ export default class ClientRepository {
       client.password,
       client.createdAt,
       client.updatedAt,
-      client.deletedAt,
     );
   }
 
@@ -109,7 +104,6 @@ export default class ClientRepository {
       password: client.password,
       createdAt: client.createdAt,
       updatedAt: new Date().toISOString(),
-      deletedAt: client.deletedAt,
     };
 
     const [updated] = await this.db
@@ -126,14 +120,10 @@ export default class ClientRepository {
       updated.password,
       updated.createdAt,
       updated.updatedAt,
-      updated.deletedAt,
     );
   }
 
   async delete(id: number): Promise<void> {
-    await this.db
-      .update(Clients)
-      .set({ deletedAt: new Date().toISOString() })
-      .where(eq(Clients.id, id));
+    await this.db.delete(Clients).where(eq(Clients.id, id));
   }
 }
