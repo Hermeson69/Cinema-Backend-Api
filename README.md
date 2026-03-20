@@ -71,5 +71,3 @@ Contato
 - Repositório: este projeto
 
 ---
-
-Arquivo gerado/atualizado automaticamente para este repositório.
